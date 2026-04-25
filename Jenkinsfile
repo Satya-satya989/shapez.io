@@ -11,11 +11,7 @@ pipeline {
 
         stage('Install Dependencies') {
             steps {
-                sh '''
-                    npm install -g yarn
-                    yarn install
-                    yarn add gulp gulp-cli --dev
-                '''
+                sh 'yarn install'
             }
         }
 
