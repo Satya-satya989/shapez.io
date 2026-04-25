@@ -1,32 +1,19 @@
-FROM node:16
+# Step 1: Build React App
+FROM node:18 AS build
 
-EXPOSE 3001 3005
+WORKDIR /app
 
-WORKDIR /shapez.io
+COPY package*.json ./
+RUN npm install
 
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    ffmpeg default-jre \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/* 
+COPY . .
+RUN npm run build
 
-COPY package.json yarn.lock ./
-RUN yarn
+# Step 2: Serve using Nginx
+FROM nginx:alpine
 
-COPY gulp ./gulp
-WORKDIR /shapez.io/gulp
-RUN yarn
+COPY --from=build /app/build /usr/share/nginx/html
 
-WORKDIR /shapez.io
-COPY res ./res
-COPY src/html ./src/html
-COPY src/css ./src/css
-COPY version ./version
-COPY sync-translations.js ./
-COPY translations ./translations
-COPY src/js ./src/js
-COPY res_raw ./res_raw
-COPY .git ./.git
-COPY electron ./electron
+EXPOSE 80
 
-WORKDIR /shapez.io/gulp
-ENTRYPOINT ["yarn", "gulp"]
+CMD ["nginx", "-g", "daemon off;"]
