@@ -1,10 +1,6 @@
 pipeline {
     agent any
 
-    environment {
-        PATH = "/usr/local/bin:/usr/bin:/bin:/usr/local/node/bin"
-    }
-
     stages {
 
         stage('Checkout') {
@@ -24,17 +20,19 @@ pipeline {
 
         stage('Install Dependencies') {
             steps {
-                sh '''
-                    yarn install
-                '''
+                steps {
+                    sh '''
+                        yarn install
+                        yarn add gulp gulp-cli --dev
+                    '''
+                }
             }
         }
 
         stage('Build Game') {
             steps {
                 sh '''
-                    # check gulp exists in node_modules
-                    npx gulp --cwd .
+                    npx gulp
                 '''
             }
         }
