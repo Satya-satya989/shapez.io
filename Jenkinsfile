@@ -1,6 +1,10 @@
 pipeline {
     agent any
 
+    environment {
+        PATH = "/usr/local/bin:/usr/bin:/bin:/usr/local/node/bin"
+    }
+
     stages {
 
         stage('Checkout') {
@@ -14,7 +18,7 @@ pipeline {
                 sh '''
                     rm -rf node_modules
                     rm -f package-lock.json yarn.lock
-                    yarn cache clean
+                    yarn cache clean || true
                 '''
             }
         }
@@ -27,10 +31,18 @@ pipeline {
             }
         }
 
+        stage('Install Build Tools') {
+            steps {
+                sh '''
+                    yarn add gulp gulp-cli browser-sync delete-empty --dev
+                '''
+            }
+        }
+
         stage('Build Game') {
             steps {
                 sh '''
-                    npx gulp
+                    npx gulp --cwd .
                 '''
             }
         }
