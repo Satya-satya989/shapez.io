@@ -1,6 +1,10 @@
 pipeline {
     agent any
 
+    environment {
+        NODE_ENV = 'production'
+    }
+
     stages {
 
         stage('Checkout') {
@@ -9,20 +13,10 @@ pipeline {
             }
         }
 
-        stage('Clean Workspace') {
-            steps {
-                sh '''
-                    rm -rf node_modules
-                    rm -f package-lock.json yarn.lock
-                '''
-            }
-        }
-
         stage('Install Dependencies') {
             steps {
                 sh '''
-                    yarn install
-                    yarn add gulp gulp-cli --dev
+                    yarn install --frozen-lockfile || yarn install
                 '''
             }
         }
@@ -30,7 +24,18 @@ pipeline {
         stage('Build Game') {
             steps {
                 sh '''
+                    cd gulp
+                    yarn install || true
                     npx gulp
+                '''
+            }
+        }
+
+        stage('Package App') {
+            steps {
+                sh '''
+                    cd ..
+                    ls -la
                 '''
             }
         }
@@ -41,6 +46,15 @@ pipeline {
                     nohup npx serve . -l 8080 > server.log 2>&1 &
                 '''
             }
+        }
+    }
+
+    post {
+        success {
+            echo 'Build completed successfully!'
+        }
+        failure {
+            echo 'Build failed. Check logs.'
         }
     }
 }
