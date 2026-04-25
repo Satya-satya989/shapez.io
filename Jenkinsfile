@@ -1,6 +1,10 @@
 pipeline {
     agent any
 
+    environment {
+        PATH = "/usr/local/bin:/usr/bin:/bin:/usr/local/node/bin"
+    }
+
     stages {
 
         stage('Checkout') {
@@ -13,9 +17,7 @@ pipeline {
             steps {
                 sh '''
                     rm -rf node_modules
-                    rm -rf gulp/node_modules
                     rm -f package-lock.json yarn.lock
-                    yarn cache clean || true
                 '''
             }
         }
@@ -23,16 +25,7 @@ pipeline {
         stage('Install Dependencies') {
             steps {
                 sh '''
-                    yarn install || npm install
-                '''
-            }
-        }
-
-        stage('Install Gulp Dependencies') {
-            steps {
-                sh '''
-                    cd gulp
-                    npm install
+                    yarn install
                 '''
             }
         }
@@ -40,8 +33,8 @@ pipeline {
         stage('Build Game') {
             steps {
                 sh '''
-                    cd gulp
-                    npx gulp
+                    # check gulp exists in node_modules
+                    npx gulp --cwd .
                 '''
             }
         }
