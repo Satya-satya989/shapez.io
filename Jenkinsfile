@@ -11,18 +11,13 @@ pipeline {
 
         stage('Clean Workspace') {
             steps {
-                sh '''
-                    rm -rf node_modules
-                    rm -f package-lock.json yarn.lock
-                '''
+                cleanWs()
             }
         }
 
         stage('Install Dependencies') {
             steps {
-                sh '''
-                    yarn install
-                '''
+                sh 'yarn install'
             }
         }
 
