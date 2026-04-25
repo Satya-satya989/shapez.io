@@ -1,19 +1,15 @@
-# Step 1: Build React App
-FROM node:18 AS build
+FROM node:18
 
 WORKDIR /app
 
-COPY package*.json ./
-RUN npm install
-
 COPY . .
-RUN npm run build
 
-# Step 2: Serve using Nginx
-FROM nginx:alpine
+RUN npm install
+RUN cd gulp && npm install
+RUN cd gulp && npx gulp
 
-COPY --from=build /app/build /usr/share/nginx/html
+RUN npm install -g serve
 
-EXPOSE 80
+EXPOSE 8080
 
-CMD ["nginx", "-g", "daemon off;"]
+CMD ["serve", ".", "-l", "8080"]
