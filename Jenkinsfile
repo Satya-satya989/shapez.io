@@ -11,7 +11,11 @@ pipeline {
 
         stage('Install Dependencies') {
             steps {
-                sh 'yarn install'
+                sh '''
+                    npm install -g yarn
+                    yarn install
+                    yarn add gulp gulp-cli --dev
+                '''
             }
         }
 
@@ -23,7 +27,7 @@ pipeline {
 
         stage('Serve App') {
             steps {
-                sh 'nohup npx serve . -l 8080 &'
+                sh 'nohup npx serve . -l 8080 > server.log 2>&1 &'
             }
         }
     }
