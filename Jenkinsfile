@@ -15,13 +15,13 @@ pipeline {
             }
         }
 
-        stage('Build') {
+        stage('Build Game') {
             steps {
-                sh 'yarn gulp'
+                sh 'npx gulp'
             }
         }
 
-        stage('Serve') {
+        stage('Serve App') {
             steps {
                 sh 'nohup npx serve . -l 8080 &'
             }
