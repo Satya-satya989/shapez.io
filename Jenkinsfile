@@ -13,7 +13,7 @@ pipeline {
             steps {
                 sh '''
                     rm -rf node_modules
-                    rm -f package-lock.json
+                    rm -f package-lock.json yarn.lock
                     yarn cache clean
                 '''
             }
@@ -21,13 +21,17 @@ pipeline {
 
         stage('Install Dependencies') {
             steps {
-                sh 'yarn install'
+                sh '''
+                    yarn install --force
+                '''
             }
         }
 
-        stage('Install Build Tools') {
+        stage('Fix Missing Build Dependencies') {
             steps {
-                sh 'yarn add gulp gulp-cli browser-sync --dev'
+                sh '''
+                    yarn add gulp gulp-cli browser-sync delete-empty --dev
+                '''
             }
         }
 
@@ -42,9 +46,9 @@ pipeline {
 
         stage('Serve App') {
             steps {
-                steps {
-                    sh 'nohup npx serve . -l 8080 > server.log 2>&1 &'
-                }
+                sh '''
+                    nohup npx serve . -l 8080 > server.log 2>&1 &
+                '''
             }
         }
     }
