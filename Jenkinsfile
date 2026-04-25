@@ -24,7 +24,6 @@ pipeline {
         stage('Build Game') {
             steps {
                 sh '''
-                    cd gulp
                     npx gulp
                 '''
             }
