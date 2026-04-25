@@ -22,15 +22,7 @@ pipeline {
         stage('Install Dependencies') {
             steps {
                 sh '''
-                    yarn install --force
-                '''
-            }
-        }
-
-        stage('Fix Missing Build Dependencies') {
-            steps {
-                sh '''
-                    yarn add gulp gulp-cli browser-sync delete-empty --dev
+                    yarn install --frozen-lockfile || yarn install
                 '''
             }
         }
@@ -38,7 +30,6 @@ pipeline {
         stage('Build Game') {
             steps {
                 sh '''
-                    cd gulp
                     npx gulp
                 '''
             }
