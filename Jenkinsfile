@@ -9,20 +9,19 @@ pipeline {
             }
         }
 
-        stage('Install Dependencies (Yarn)') {
+        stage('Install Dependencies') {
             steps {
-                sh 'npm install -g yarn'
                 sh 'yarn install'
             }
         }
 
-        stage('Build Game (Gulp)') {
+        stage('Build') {
             steps {
                 sh 'yarn gulp'
             }
         }
 
-        stage('Serve App') {
+        stage('Serve') {
             steps {
                 sh 'nohup npx serve . -l 8080 &'
             }
